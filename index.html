@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로드랑 - 로드자전거 동호회</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-top:#eaf7ff;
+    --sky-mid:#8fd3f4;
+    --sky-deep:#2f8fc7;
+    --sky-night:#1c5a86;
+    --sun:#ffc94a;
+    --asphalt:#1e2a32;
+    --asphalt-2:#28363f;
+    --chalk:#fbfeff;
+    --line:#bfe3f5;
+    --ink:#0d2b3e;
+    --ink-soft:#4c6b7a;
+    --danger:#d9534f;
+    --ok:#2e9e6a;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Noto Sans KR',sans-serif;
+    color:var(--ink);
+    background:var(--chalk);
+    min-height:100vh;
+  }
+  h1,h2,h3,.brand,.hero-title{font-family:'Black Han Sans','Noto Sans KR',sans-serif;}
+  a{color:inherit;text-decoration:none;}
+  button,input,textarea,select{font-family:inherit;font-size:1em;}
+  ::selection{background:var(--sun);color:var(--ink);}
+
+  /* ---------- sky hero ---------- */
+  .sky-wrap{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(180deg,var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-deep) 100%);
+    padding-bottom:46px;
+  }
+  .sky-wrap .sun{
+    position:absolute; top:-40px; right:60px;
+    width:140px;height:140px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #fff6d6, var(--sun) 60%, #f2b53a 100%);
+    box-shadow:0 0 70px 20px rgba(255,201,74,.45);
+  }
+  .cloud{position:absolute; opacity:.9; filter:drop-shadow(0 6px 8px rgba(0,0,0,.06));}
+  .cloud svg{display:block;width:100%;height:100%;}
+  .bike-float{
+    position:absolute; font-size:2rem; opacity:.85;
+    animation:drift linear infinite;
+  }
+  @keyframes drift{
+    from{transform:translateX(-10vw) translateY(0);}
+    to{transform:translateX(110vw) translateY(-10px);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .bike-float{animation:none;}
+  }
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 28px;
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(255,255,255,.6);
+  }
+  .brand{font-size:1.5rem; color:var(--sky-night); display:flex; align-items:center; gap:8px; cursor:pointer;}
+  nav{display:flex; gap:4px; flex-wrap:wrap;}
+  nav a{
+    padding:9px 14px; border-radius:999px; font-weight:700; font-size:.92rem;
+    color:var(--sky-night); transition:background .15s;
+  }
+  nav a:hover, nav a.active{background:var(--sky-deep); color:#fff;}
+  .auth-area{display:flex; gap:8px; align-items:center;}
+  .btn{
+    border:none; cursor:pointer; border-radius:999px; padding:9px 18px;
+    font-weight:700; transition:transform .1s, box-shadow .1s;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--sky-deep); color:#fff;}
+  .btn-primary:hover{background:var(--sky-night);}
+  .btn-sun{background:var(--sun); color:var(--asphalt);}
+  .btn-sun:hover{filter:brightness(1.05);}
+  .btn-ghost{background:transparent; color:var(--sky-night); border:2px solid var(--sky-deep);}
+  .btn-danger{background:#fdeceb; color:var(--danger); border:1px solid #f3c2c0;}
+  .btn-sm{padding:6px 12px; font-size:.85rem;}
+  .hamburger{display:none;}
+
+  /* road divider - signature device */
+  .road{
+    height:14px; background:var(--asphalt);
+    background-image:repeating-linear-gradient(90deg,#fff 0 26px, transparent 26px 52px);
+    background-position:0 center; background-size:52px 4px; background-repeat:repeat-x;
+    background-position-y:5px;
+  }
+
+  main{max-width:1080px; margin:0 auto; padding:34px 20px 80px;}
+  .container-narrow{max-width:760px; margin:0 auto;}
+
+  .hero-title{font-size:2.4rem; color:var(--sky-night); line-height:1.35; margin:0 0 10px;}
+  .hero-sub{color:var(--ink-soft); font-size:1.05rem; max-width:520px; margin:0 0 22px;}
+  .hero-cta{display:flex; gap:12px; flex-wrap:wrap;}
+  .hero-inner{padding:70px 40px 30px; position:relative; z-index:2;}
+
+  .stat-row{display:flex; gap:14px; flex-wrap:wrap; margin-top:34px;}
+  .stat{background:rgba(255,255,255,.75); border-radius:var(--radius); padding:16px 22px; min-width:150px; border:1px solid rgba(255,255,255,.8);}
+  .stat b{display:block; font-size:1.6rem; color:var(--sky-night); font-family:'Black Han Sans';}
+  .stat span{color:var(--ink-soft); font-size:.85rem;}
+
+  section.block{margin:52px 0;}
+  .block-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:18px; gap:12px; flex-wrap:wrap;}
+  .block-head h2{font-size:1.5rem; color:var(--sky-night); margin:0;}
+  .block-head p{color:var(--ink-soft); margin:4px 0 0; font-size:.9rem;}
+
+  .card-list{display:flex; flex-direction:column; gap:0;}
+  .row-item{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:16px 4px; border-bottom:1px solid var(--line); cursor:pointer;
+  }
+  .row-item:hover .row-title{color:var(--sky-deep);}
+  .row-title{font-weight:700; font-size:1.02rem;}
+  .row-meta{color:var(--ink-soft); font-size:.82rem; margin-top:4px;}
+  .pin-tag{background:var(--sun); color:var(--asphalt); font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:999px; margin-right:8px;}
+
+  .meet-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:16px;}
+  .meet-card{
+    border:1.5px solid var(--line); border-radius:var(--radius); padding:18px;
+    background:#fff; display:flex; flex-direction:column; gap:8px;
+  }
+  .meet-date{font-weight:900; color:var(--sky-deep); font-size:1.05rem;}
+  .meet-title{font-weight:700; font-size:1.08rem;}
+  .meet-loc{color:var(--ink-soft); font-size:.86rem;}
+  .badge{display:inline-block; font-size:.72rem; font-weight:700; padding:3px 9px; border-radius:999px; background:#eaf6ff; color:var(--sky-night); width:fit-content;}
+  .status-pill{font-size:.75rem; font-weight:700; padding:3px 10px; border-radius:999px;}
+  .status-pending{background:#fff4d9; color:#8a6d1f;}
+  .status-approved{background:#dff5e8; color:var(--ok);}
+  .status-canceled{background:#fbe6e6; color:var(--danger);}
+
+  .detail-box{background:#fff; border:1.5px solid var(--line); border-radius:var(--radius); padding:26px;}
+  .detail-title{font-size:1.5rem; margin:0 0 6px;}
+  .detail-meta{color:var(--ink-soft); font-size:.85rem; margin-bottom:18px; display:flex; gap:10px; flex-wrap:wrap;}
+  .detail-content{white-space:pre-wrap; line-height:1.7; margin:18px 0;}
+  .detail-actions{display:flex; gap:8px; margin-top:16px;}
+  .gallery-img{width:100%; max-height:420px; object-fit:cover; border-radius:10px; margin-bottom:14px; background:#eef7fc;}
+
+  form.stack{display:flex; flex-direction:column; gap:14px;}
+  .field label{display:block; font-weight:700; margin-bottom:6px; font-size:.9rem; color:var(--sky-night);}
+  .field input, .field textarea, .field select{
+    width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:10px; background:#fbfeff;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{outline:2px solid var(--sky-deep); outline-offset:1px; border-color:var(--sky-deep);}
+  .field textarea{min-height:140px; resize:vertical;}
+  .field-row{display:flex; gap:12px; flex-wrap:wrap;}
+  .field-row .field{flex:1; min-width:180px;}
+  .checkline{display:flex; align-items:center; gap:8px;}
+  .checkline input{width:auto;}
+
+  .comment{border-top:1px solid var(--line); padding:12px 0; display:flex; justify-content:space-between; gap:10px;}
+  .comment-body b{display:block; font-size:.88rem; color:var(--sky-night);}
+  .comment-body p{margin:4px 0 0; white-space:pre-wrap;}
+
+  .empty{color:var(--ink-soft); padding:30px 0; text-align:center;}
+
+  .tabbar{display:flex; gap:6px; margin-bottom:22px; border-bottom:2px solid var(--line); flex-wrap:wrap;}
+  .tabbar button{
+    background:none; border:none; padding:10px 16px; font-weight:700; color:var(--ink-soft);
+    border-bottom:3px solid transparent; cursor:pointer; margin-bottom:-2px;
+  }
+  .tabbar button.active{color:var(--sky-deep); border-color:var(--sky-deep);}
+
+  table.admin-table{width:100%; border-collapse:collapse; background:#fff;}
+  table.admin-table th, table.admin-table td{padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; font-size:.9rem;}
+  table.admin-table th{color:var(--sky-night); background:#f3fbff;}
+
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(13,43,62,.45); display:flex; align-items:center; justify-content:center;
+    z-index:200; padding:16px;
+  }
+  .modal-box{background:#fff; border-radius:var(--radius); padding:28px; max-width:440px; width:100%; max-height:90vh; overflow:auto;}
+  .modal-box h3{margin-top:0;}
+
+  .toast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%);
+    background:var(--asphalt); color:#fff; padding:12px 22px; border-radius:999px; font-weight:700;
+    z-index:300; opacity:0; transition:opacity .25s; pointer-events:none; font-size:.9rem;
+  }
+  .toast.show{opacity:1;}
+
+  footer{background:var(--asphalt); color:#c9dbe4; padding:32px 20px; text-align:center; font-size:.85rem;}
+  footer .brand{color:#fff; justify-content:center;}
+
+  @media (max-width:760px){
+    nav{display:none; position:absolute; top:100%; left:0; right:0; background:#fff; flex-direction:column; padding:10px; box-shadow:0 8px 16px rgba(0,0,0,.08);}
+    nav.open{display:flex;}
+    .hamburger{display:block; background:none; border:none; font-size:1.6rem; cursor:pointer; color:var(--sky-night);}
+    header{position:relative;}
+    .hero-title{font-size:1.8rem;}
+  }
+</style>
+</head>
+<body>
+
+<div id="header-sky"></div>
+<header>
+  <div class="brand" onclick="location.hash='#/home'">🚴‍♂️ 로드랑</div>
+  <button class="hamburger" id="hamburgerBtn">☰</button>
+  <nav id="mainNav">
+    <a href="#/home" data-route="home">홈</a>
+    <a href="#/notices" data-route="notices">공지사항</a>
+    <a href="#/posts" data-route="posts">자유게시판</a>
+    <a href="#/gallery" data-route="gallery">갤러리</a>
+    <a href="#/meetups/regular" data-route="meetups/regular">정기모임</a>
+    <a href="#/meetups/small" data-route="meetups/small">소모임</a>
+    <a href="#/mypage" data-route="mypage">마이페이지</a>
+    <a href="#/admin" data-route="admin" id="adminNavLink" style="display:none;">관리자</a>
+  </nav>
+  <div class="auth-area" id="authArea"></div>
+</header>
+<div class="road"></div>
+
+<main id="app"></main>
+
+<footer>
+  <div class="brand">🚴 로드랑</div>
+  <p>매달 새로운 길 위에서, 로드자전거 동호회 로드랑 · 수강용 샘플 사이트</p>
+</footer>
+
+<div id="modalRoot"></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+/* ============================================================
+   초기 설정
+============================================================ */
+const SUPABASE_URL = 'https://dhfxdlooahkbrrzxmngn.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_hFTXpYWsjmnOC5u9IRB7Gw_eocfp5nw';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let currentProfile = null;
+
+/* ============================================================
+   유틸
+============================================================ */
+function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
+function escapeHtml(str){
+  if(str===null||str===undefined) return '';
+  return String(str).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function fmtDate(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+}
+function fmtDateTime(iso){
+  const d = new Date(iso);
+  return `${fmtDate(iso)} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+function closeModal(){ document.getElementById('modalRoot').innerHTML=''; }
+function openModal(html){
+  document.getElementById('modalRoot').innerHTML =
+    `<div class="modal-backdrop" id="modalBackdrop"><div class="modal-box">${html}</div></div>`;
+  document.getElementById('modalBackdrop').addEventListener('click', e=>{
+    if(e.target.id==='modalBackdrop') closeModal();
+  });
+}
+function requireLogin(){
+  if(!currentUser){
+    openModal(`
+      <h3>로그인이 필요해요</h3>
+      <p style="color:var(--ink-soft)">이 기능은 로그인 후 이용할 수 있어요.</p>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button class="btn btn-primary" onclick="closeModal();location.hash='#/login'">로그인하러 가기</button>
+        <button class="btn btn-ghost" onclick="closeModal()">닫기</button>
+      </div>`);
+    return false;
+  }
+  return true;
+}
+function isAdmin(){ return currentProfile && currentProfile.role === 'admin'; }
+
+/* ============================================================
+   하늘 배경 (홈 히어로) - SVG 구름 + 떠다니는 자전거 이모지
+============================================================ */
+function skyHeroBackground(){
+  const clouds = [
+    {top:'8%', left:'6%', w:120, dur:'0s'},
+    {top:'18%', left:'70%', w:160, dur:'0s'},
+    {top:'34%', left:'30%', w:100, dur:'0s'},
+  ];
+  const cloudSvg = `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="60" cy="60" rx="55" ry="30" fill="#ffffff"/>
+    <ellipse cx="110" cy="45" rx="45" ry="35" fill="#ffffff"/>
+    <ellipse cx="150" cy="65" rx="40" ry="25" fill="#ffffff"/>
+  </svg>`;
+  let html = '';
+  clouds.forEach(c=>{
+    html += `<div class="cloud" style="top:${c.top};left:${c.left};width:${c.w}px;height:${c.w*0.5}px;">${cloudSvg}</div>`;
+  });
+  const bikes = ['🚴‍♂️','🚴‍♀️','🚵','🚲'];
+  for(let i=0;i<5;i++){
+    const emoji = bikes[i % bikes.length];
+    const top = 10 + Math.random()*55;
+    const dur = 22 + Math.random()*18;
+    const delay = -Math.random()*dur;
+    html += `<div class="bike-float" style="top:${top}%; animation-duration:${dur}s; animation-delay:${delay}s;">${emoji}</div>`;
+  }
+  return `<div class="sun"></div>${html}`;
+}
+
+/* ============================================================
+   인증 (Auth)
+============================================================ */
+async function loadProfile(){
+  if(!currentUser){ currentProfile = null; return; }
+  const { data, error } = await sb.from('rbc_profiles').select('*').eq('id', currentUser.id).single();
+  currentProfile = error ? null : data;
+}
+function renderAuthArea(){
+  const area = document.getElementById('authArea');
+  if(currentUser && currentProfile){
+    area.innerHTML = `
+      <span style="font-weight:700;color:var(--sky-night);">${escapeHtml(currentProfile.name)}님${isAdmin()?' <span class="badge">관리자</span>':''}</span>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn">로그아웃</button>`;
+    document.getElementById('logoutBtn').onclick = async ()=>{
+      await sb.auth.signOut(); toast('로그아웃 되었습니다.'); location.hash='#/home';
+    };
+  } else {
+    area.innerHTML = `
+      <a class="btn btn-ghost btn-sm" href="#/login">로그인</a>
+      <a class="btn btn-primary btn-sm" href="#/signup">회원가입</a>`;
+  }
+  document.getElementById('adminNavLink').style.display = isAdmin() ? '' : 'none';
+}
+
+async function handleSignup(e){
+  e.preventDefault();
+  const f = e.target;
+  const email = f.email.value.trim();
+  const password = f.password.value;
+  const name = f.name.value.trim();
+  const phone = f.phone.value.trim();
+  if(password.length < 6){ toast('비밀번호는 6자 이상이어야 해요.'); return; }
+  const { data, error } = await sb.auth.signUp({
+    email, password, options:{ data:{ name, phone } }
+  });
+  if(error){ toast('가입 실패: '+error.message); return; }
+  toast('가입 완료! 이메일 인증이 필요할 수 있어요.');
+  if(data.session){
+    currentUser = data.user; await loadProfile(); renderAuthArea(); location.hash='#/home';
+  } else {
+    location.hash = '#/login';
+  }
+}
+async function handleLogin(e){
+  e.preventDefault();
+  const f = e.target;
+  const { data, error } = await sb.auth.signInWithPassword({
+    email: f.email.value.trim(), password: f.password.value
+  });
+  if(error){ toast('로그인 실패: '+error.message); return; }
+  currentUser = data.user; await loadProfile(); renderAuthArea();
+  toast('환영합니다!');
+  location.hash = '#/home';
+}
+
+/* ============================================================
+   라우터
+============================================================ */
+const routes = {};
+function route(pattern, handler){ routes[pattern] = handler; }
+function matchRoute(hash){
+  const path = hash.replace(/^#/, '') || '/home';
+  const parts = path.split('/').filter(Boolean);
+  for(const pattern in routes){
+    const pParts = pattern.split('/').filter(Boolean);
+    if(pParts.length !== parts.length) continue;
+    const params = {};
+    let ok = true;
+    for(let i=0;i<pParts.length;i++){
+      if(pParts[i].startsWith(':')) params[pParts[i].slice(1)] = decodeURIComponent(parts[i]);
+      else if(pParts[i] !== parts[i]) { ok=false; break; }
+    }
+    if(ok) return { handler: routes[pattern], params };
+  }
+  return null;
+}
+async function router(){
+  window.scrollTo(0,0);
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  const hash = location.hash || '#/home';
+  const topRoute = hash.replace('#/','').split('/')[0];
+  document.querySelectorAll('nav a').forEach(a=>{
+    if(a.dataset.route === hash.replace('#/','') || a.dataset.route === topRoute) a.classList.add('active');
+  });
+  document.getElementById('mainNav').classList.remove('open');
+  const m = matchRoute(hash);
+  const app = document.getElementById('app');
+  if(!m){ app.innerHTML = `<div class="empty">페이지를 찾을 수 없어요.</div>`; return; }
+  try{
+    app.innerHTML = `<div class="empty">불러오는 중...</div>`;
+    await m.handler(m.params);
+  }catch(err){
+    console.error(err);
+    app.innerHTML = `<div class="empty">오류가 발생했어요: ${escapeHtml(err.message||String(err))}</div>`;
+  }
+}
+window.addEventListener('hashchange', router);
+
+/* ============================================================
+   홈
+============================================================ */
+route('/home', async ()=>{
+  const [{count: noticeCount}, {count: postCount}, {data: notices}, {data: rmeets}, {data: smeets}] = await Promise.all([
+    sb.from('rbc_notices').select('*', {count:'exact', head:true}),
+    sb.from('rbc_posts').select('*', {count:'exact', head:true}),
+    sb.from('rbc_notices').select('*').order('is_pinned',{ascending:false}).order('created_at',{ascending:false}).limit(3),
+    sb.from('rbc_regular_meetups').select('*').order('event_date').limit(2),
+    sb.from('rbc_small_meetups').select('*').order('event_date').limit(2),
+  ]);
+
+  document.getElementById('app').innerHTML = `
+  <div class="sky-wrap" style="margin:-34px -20px 0; border-radius:0 0 32px 32px;">
+    ${skyHeroBackground()}
+    <div class="hero-inner">
+      <div class="hero-title">바퀴가 굴러가는 곳마다,<br>우리의 다음 길이 생깁니다</div>
+      <p class="hero-sub">로드랑은 연 4회 정기모임과 매달 열리는 지역별 소모임으로 전국의 도로를 함께 달리는 로드자전거 동호회입니다.</p>
+      <div class="hero-cta">
+        <a class="btn btn-sun" href="#/meetups/regular">정기모임 보기</a>
+        <a class="btn btn-ghost" href="#/meetups/small">소모임 신청하기</a>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b>연 4회</b><span>정기모임 개최</span></div>
+        <div class="stat"><b>매달</b><span>지역별 소모임</span></div>
+        <div class="stat"><b>${noticeCount ?? 0}</b><span>공지사항</span></div>
+        <div class="stat"><b>${postCount ?? 0}</b><span>자유게시판 글</span></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="block">
+    <div class="block-head">
+      <div><h2>공지사항</h2><p>동호회의 새로운 소식을 확인하세요</p></div>
+      <a href="#/notices" class="btn btn-ghost btn-sm">전체보기</a>
+    </div>
+    <div class="card-list">
+      ${(notices&&notices.length) ? notices.map(n=>`
+        <div class="row-item" onclick="location.hash='#/notices/${n.id}'">
+          <div>
+            <div class="row-title">${n.is_pinned?'<span class="pin-tag">고정</span>':''}${escapeHtml(n.title)}</div>
+            <div class="row-meta">${fmtDate(n.created_at)} · ${escapeHtml(n.author_name||'')}</div>
+          </div>
+        </div>`).join('') : `<div class="empty">등록된 공지사항이 없어요.</div>`}
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <div><h2>다가오는 정기모임</h2><p>연 4회, 전 회원이 함께합니다</p></div>
+      <a href="#/meetups/regular" class="btn btn-ghost btn-sm">전체보기</a>
+    </div>
+    <div class="meet-grid">
+      ${(rmeets&&rmeets.length) ? rmeets.map(meetCard('regular')).join('') : `<div class="empty">예정된 정기모임이 없어요.</div>`}
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <div><h2>이번 달 소모임</h2><p>지역별로 떠나는 소규모 라이딩</p></div>
+      <a href="#/meetups/small" class="btn btn-ghost btn-sm">전체보기</a>
+    </div>
+    <div class="meet-grid">
+      ${(smeets&&smeets.length) ? smeets.map(meetCard('small')).join('') : `<div class="empty">예정된 소모임이 없어요.</div>`}
+    </div>
+  </section>
+  `;
+});
+
+function meetCard(type){
+  return (m)=>`
+    <div class="meet-card">
+      <span class="badge">${type==='regular'?'정기모임':(m.region||'소모임')}</span>
+      <div class="meet-date">${fmtDate(m.event_date)}</div>
+      <div class="meet-title">${escapeHtml(m.title)}</div>
+      <div class="meet-loc">📍 ${escapeHtml(m.location||'미정')} · 정원 ${m.capacity}명</div>
+      <button class="btn btn-primary btn-sm" style="margin-top:6px;align-self:flex-start;" onclick="location.hash='#/meetups/${type}'">자세히 보기</button>
+    </div>`;
+}
+
+/* ============================================================
+   게시판 공통 렌더 헬퍼 (목록/상세/폼)
+============================================================ */
+function boardListHeader(title, desc, writeHref){
+  return `
+    <div class="block-head">
+      <div><h2>${title}</h2><p>${desc}</p></div>
+      ${writeHref ? `<button class="btn btn-primary" onclick="${writeHref}">글 작성하기</button>` : ''}
+    </div>`;
+}
+
+/* ---------------- 공지사항 ---------------- */
+route('/notices', async ()=>{
+  const { data, error } = await sb.from('rbc_notices').select('*').order('is_pinned',{ascending:false}).order('created_at',{ascending:false});
+  if(error) throw error;
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      ${boardListHeader('공지사항','동호회 운영 소식과 안내를 전해드려요.', isAdmin() ? "location.hash='#/notices/new'" : null)}
+      <div class="card-list">
+        ${data.length ? data.map(n=>`
+          <div class="row-item" onclick="location.hash='#/notices/${n.id}'">
+            <div>
+              <div class="row-title">${n.is_pinned?'<span class="pin-tag">고정</span>':''}${escapeHtml(n.title)}</div>
+              <div class="row-meta">${fmtDate(n.created_at)} · ${escapeHtml(n.author_name||'')}</div>
+            </div>
+          </div>`).join('') : `<div class="empty">등록된 공지사항이 없어요.</div>`}
+      </div>
+    </div>`;
+});
+
+route('/notices/new', async ()=>{
+  if(!isAdmin()){ document.getElementById('app').innerHTML = `<div class="empty">관리자만 작성할 수 있어요.</div>`; return; }
+  renderNoticeForm();
+});
+route('/notices/:id/edit', async ({id})=>{
+  if(!isAdmin()){ document.getElementById('app').innerHTML = `<div class="empty">관리자만 수정할 수 있어요.</div>`; return; }
+  const { data, error } = await sb.from('rbc_notices').select('*').eq('id', id).single();
+  if(error) throw error;
+  renderNoticeForm(data);
+});
+function renderNoticeForm(notice){
+  const editing = !!notice;
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      <div class="detail-box">
+        <h2>${editing?'공지사항 수정':'공지사항 작성'}</h2>
+        <form class="stack" id="noticeForm">
+          <div class="field"><label>제목</label><input name="title" required value="${editing?escapeHtml(notice.title):''}"></div>
+          <div class="field"><label>내용</label><textarea name="content" required>${editing?escapeHtml(notice.content):''}</textarea></div>
+          <div class="checkline"><input type="checkbox" name="is_pinned" id="pinChk" ${editing&&notice.is_pinned?'checked':''}><label for="pinChk">상단 고정</label></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary" type="submit">${editing?'수정 완료':'등록하기'}</button>
+            <button class="btn btn-ghost" type="button" onclick="history.back()">취소</button>
+          </div>
+        </form>
+      </div>
+    </div>`;
+  document.getElementById('noticeForm').onsubmit = async (e)=>{
+    e.preventDefault();
+    const f = e.target;
+    const payload = { title:f.title.value.trim(), content:f.content.value.trim(), is_pinned:f.is_pinned.checked };
+    let error;
+    if(editing){
+      ({error} = await sb.from('rbc_notices').update({...payload, updated_at:new Date().toISOString()}).eq('id', notice.id));
+    } else {
+      payload.author_id = currentUser.id; payload.author_name = currentProfile.name;
+      ({error} = await sb.from('rbc_notices').insert(payload));
+    }
+    if(error){ toast('저장 실패: '+error.message); return; }
+    toast(editing?'수정되었습니다.':'등록되었습니다.');
+    location.hash = '#/notices';
+  };
+}
+route('/notices/:id', async ({id})=>{
+  const { data, error } = await sb.from('rbc_notices').select('*').eq('id', id).single();
+  if(error){ document.getElementById('app').innerHTML = `<div class="empty">글을 찾을 수 없어요.</div>`; return; }
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      <div class="detail-box">
+        <div class="detail-title">${data.is_pinned?'<span class="pin-tag">고정</span>':''}${escapeHtml(data.title)}</div>
+        <div class="detail-meta"><span>${escapeHtml(data.author_name||'관리자')}</span><span>${fmtDateTime(data.created_at)}</span></div>
+        <div class="detail-content">${escapeHtml(data.content)}</div>
+        ${isAdmin()?`
+        <div class="detail-actions">
+          <button class="btn btn-ghost btn-sm" onclick="location.hash='#/notices/${data.id}/edit'">수정</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteNotice('${data.id}')">삭제</button>
+        </div>`:''}
+        <div style="margin-top:18px;"><a class="btn btn-ghost btn-sm" href="#/notices">목록으로</a></div>
+      </div>
+    </div>`;
+});
+async function deleteNotice(id){
+  if(!confirm('삭제할까요?')) return;
+  const { error } = await sb.from('rbc_notices').delete().eq('id', id);
+  if(error){ toast('삭제 실패: '+error.message); return; }
+  toast('삭제되었습니다.'); location.hash = '#/notices';
+}
+
+/* ---------------- 자유게시판 ---------------- */
+route('/posts', async ()=>{
+  const { data, error } = await sb.from('rbc_posts').select('*').order('created_at',{ascending:false});
+  if(error) throw error;
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      ${boardListHeader('자유게시판','라이딩 정보와 이야기를 자유롭게 나눠요.', currentUser ? "location.hash='#/posts/new'" : "requireLogin()")}
+      <div class="card-list">
+        ${data.length ? data.map(p=>`
+          <div class="row-item" onclick="location.hash='#/posts/${p.id}'">
+            <div>
+              <div class="row-title">${escapeHtml(p.title)}</div>
+              <div class="row-meta">${escapeHtml(p.author_name||'')} · ${fmtDate(p.created_at)} · 조회 ${p.view_count}</div>
+            </div>
+          </div>`).join('') : `<div class="empty">등록된 글이 없어요. 첫 글을 남겨보세요!</div>`}
+      </div>
+    </div>`;
+});
+route('/posts/new', async ()=>{
+  if(!requireLogin()){ document.getElementById('app').innerHTML = `<div class="empty">로그인이 필요해요.</div>`; return; }
+  renderPostForm();
+});
+route('/posts/:id/edit', async ({id})=>{
+  const { data, error } = await sb.from('rbc_posts').select('*').eq('id', id).single();
+  if(error) throw error;
+  if(!currentUser || (currentUser.id !== data.author_id && !isAdmin())){
+    document.getElementById('app').innerHTML = `<div class="empty">수정 권한이 없어요.</div>`; return;
+  }
+  renderPostForm(data);
+});
+function renderPostForm(post){
+  const editing = !!post;
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      <div class="detail-box">
+        <h2>${editing?'글 수정':'글 작성하기'}</h2>
+        <form class="stack" id="postForm">
+          <div class="field"><label>제목</label><input name="title" required value="${editing?escapeHtml(post.title):''}"></div>
+          <div class="field"><label>내용</label><textarea name="content" required>${editing?escapeHtml(post.content):''}</textarea></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary" type="submit">${editing?'수정 완료':'등록하기'}</button>
+            <button class="btn btn-ghost" type="button" onclick="history.back()">취소</button>
+          </div>
+        </form>
+      </div>
+    </div>`;
+  document.getElementById('postForm').onsubmit = async (e)=>{
+    e.preventDefault();
+    const f = e.target;
+    const payload = { title:f.title.value.trim(), content:f.content.value.trim() };
+    let error;
+    if(editing){
+      ({error} = await sb.from('rbc_posts').update({...payload, updated_at:new Date().toISOString()}).eq('id', post.id));
+    } else {
+      payload.author_id = currentUser.id; payload.author_name = currentProfile.name;
+      ({error} = await sb.from('rbc_posts').insert(payload));
+    }
+    if(error){ toast('저장 실패: '+error.message); return; }
+    toast(editing?'수정되었습니다.':'등록되었습니다.');
+    location.hash = '#/posts';
+  };
+}
+route('/posts/:id', async ({id})=>{
+  const { data, error } = await sb.from('rbc_posts').select('*').eq('id', id).single();
+  if(error){ document.getElementById('app').innerHTML = `<div class="empty">글을 찾을 수 없어요.</div>`; return; }
+  sb.from('rbc_posts').update({ view_count: data.view_count + 1 }).eq('id', id).then(()=>{});
+  const { data: comments } = await sb.from('rbc_comments').select('*').eq('post_id', id).order('created_at');
+  const canEdit = currentUser && (currentUser.id === data.author_id || isAdmin());
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      <div class="detail-box">
+        <div class="detail-title">${escapeHtml(data.title)}</div>
+        <div class="detail-meta"><span>${escapeHtml(data.author_name||'')}</span><span>${fmtDateTime(data.created_at)}</span><span>조회 ${data.view_count+1}</span></div>
+        <div class="detail-content">${escapeHtml(data.content)}</div>
+        ${canEdit?`
+        <div class="detail-actions">
+          <button class="btn btn-ghost btn-sm" onclick="location.hash='#/posts/${data.id}/edit'">수정</button>
+          <button class="btn btn-danger btn-sm" onclick="deletePost('${data.id}')">삭제</button>
+        </div>`:''}
+        <div style="margin-top:18px;"><a class="btn btn-ghost btn-sm" href="#/posts">목록으로</a></div>
+
+        <div style="margin-top:30px;">
+          <h3 style="font-size:1.1rem;">댓글 ${comments.length}</h3>
+          ${currentUser ? `
+          <form class="stack" id="commentForm" style="margin-bottom:6px;">
+            <textarea name="content" placeholder="댓글을 남겨보세요" required style="min-height:70px;"></textarea>
+            <button class="btn btn-primary btn-sm" style="align-self:flex-end;" type="submit">댓글 등록</button>
+          </form>` : `<p style="color:var(--ink-soft);font-size:.9rem;">댓글을 남기려면 <a href="#/login" style="color:var(--sky-deep);font-weight:700;">로그인</a>하세요.</p>`}
+          <div>
+            ${comments.map(c=>`
+              <div class="comment">
+                <div class="comment-body"><b>${escapeHtml(c.author_name||'')}</b><p>${escapeHtml(c.content)}</p></div>
+                ${(currentUser && (currentUser.id===c.author_id || isAdmin())) ? `<button class="btn btn-danger btn-sm" onclick="deleteComment('${c.id}','${id}')">삭제</button>` : ''}
+              </div>`).join('') || `<div class="empty">첫 댓글을 남겨보세요.</div>`}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  const cForm = document.getElementById('commentForm');
+  if(cForm) cForm.onsubmit = async (e)=>{
+    e.preventDefault();
+    const content = e.target.content.value.trim();
+    if(!content) return;
+    const { error } = await sb.from('rbc_comments').insert({ post_id:id, author_id:currentUser.id, author_name:currentProfile.name, content });
+    if(error){ toast('등록 실패: '+error.message); return; }
+    router();
+  };
+});
+async function deletePost(id){
+  if(!confirm('삭제할까요?')) return;
+  const { error } = await sb.from('rbc_posts').delete().eq('id', id);
+  if(error){ toast('삭제 실패: '+error.message); return; }
+  toast('삭제되었습니다.'); location.hash = '#/posts';
+}
+async function deleteComment(cid, postId){
+  if(!confirm('댓글을 삭제할까요?')) return;
+  const { error } = await sb.from('rbc_comments').delete().eq('id', cid);
+  if(error){ toast('삭제 실패: '+error.message); return; }
+  router();
+}
+
+/* ---------------- 갤러리 ---------------- */
+route('/gallery', async ()=>{
+  const { data, error } = await sb.from('rbc_gallery').select('*').order('created_at',{ascending:false});
+  if(error) throw error;
+  document.getElementById('app').innerHTML = `
+    ${boardListHeader('갤러리','라이딩 사진과 후기를 공유해요.', currentUser ? "location.hash='#/gallery/new'" : "requireLogin()")}
+    <div class="meet-grid">
+      ${data.length ? data.map(g=>`
+        <div class="meet-card" style="cursor:pointer;" onclick="location.hash='#/gallery/${g.id}'">
+          ${g.image_url?`<img src="${escapeHtml(g.image_url)}" class="gallery-img" style="max-height:160px;" onerror="this.style.display='none'">`:''}
+          <div class="meet-title">${escapeHtml(g.title)}</div>
+          <div class="meet-loc">${escapeHtml(g.author_name||'')} · ${fmtDate(g.created_at)}</div>
+        </div>`).join('') : `<div class="empty">등록된 사진이 없어요.</div>`}
+    </div>`;
+});
+route('/gallery/new', async ()=>{
+  if(!requireLogin()){ document.getElementById('app').innerHTML = `<div class="empty">로그인이 필요해요.</div>`; return; }
+  renderGalleryForm();
+});
+route('/gallery/:id/edit', async ({id})=>{
+  const { data, error } = await sb.from('rbc_gallery').select('*').eq('id', id).single();
+  if(error) throw error;
+  if(!currentUser || (currentUser.id !== data.author_id && !isAdmin())){
+    document.getElementById('app').innerHTML = `<div class="empty">수정 권한이 없어요.</div>`; return;
+  }
+  renderGalleryForm(data);
+});
+function renderGalleryForm(item){
+  const editing = !!item;
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      <div class="detail-box">
+        <h2>${editing?'갤러리 수정':'사진 후기 등록'}</h2>
+        <form class="stack" id="galleryForm">
+          <div class="field"><label>제목</label><input name="title" required value="${editing?escapeHtml(item.title):''}"></div>
+          <div class="field"><label>이미지 URL</label><input name="image_url" placeholder="https://..." value="${editing?escapeHtml(item.image_url||''):''}"></div>
+          <div class="field"><label>내용</label><textarea name="content">${editing?escapeHtml(item.content||''):''}</textarea></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary" type="submit">${editing?'수정 완료':'등록하기'}</button>
+            <button class="btn btn-ghost" type="button" onclick="history.back()">취소</button>
+          </div>
+        </form>
+      </div>
+    </div>`;
+  document.getElementById('galleryForm').onsubmit = async (e)=>{
+    e.preventDefault();
+    const f = e.target;
+    const payload = { title:f.title.value.trim(), image_url:f.image_url.value.trim(), content:f.content.value.trim() };
+    let error;
+    if(editing){
+      ({error} = await sb.from('rbc_gallery').update(payload).eq('id', item.id));
+    } else {
+      payload.author_id = currentUser.id; payload.author_name = currentProfile.name;
+      ({error} = await sb.from('rbc_gallery').insert(payload));
+    }
+    if(error){ toast('저장 실패: '+error.message); return; }
+    toast(editing?'수정되었습니다.':'등록되었습니다.');
+    location.hash = '#/gallery';
+  };
+}
+route('/gallery/:id', async ({id})=>{
+  const { data, error } = await sb.from('rbc_gallery').select('*').eq('id', id).single();
+  if(error){ document.getElementById('app').innerHTML = `<div class="empty">게시물을 찾을 수 없어요.</div>`; return; }
+  const canEdit = currentUser && (currentUser.id === data.author_id || isAdmin());
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      <div class="detail-box">
+        ${data.image_url?`<img src="${escapeHtml(data.image_url)}" class="gallery-img" onerror="this.style.display='none'">`:''}
+        <div class="detail-title">${escapeHtml(data.title)}</div>
+        <div class="detail-meta"><span>${escapeHtml(data.author_name||'')}</span><span>${fmtDateTime(data.created_at)}</span></div>
+        <div class="detail-content">${escapeHtml(data.content||'')}</div>
+        ${canEdit?`
+        <div class="detail-actions">
+          <button class="btn btn-ghost btn-sm" onclick="location.hash='#/gallery/${data.id}/edit'">수정</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteGallery('${data.id}')">삭제</button>
+        </div>`:''}
+        <div style="margin-top:18px;"><a class="btn btn-ghost btn-sm" href="#/gallery">목록으로</a></div>
+      </div>
+    </div>`;
+});
+async function deleteGallery(id){
+  if(!confirm('삭제할까요?')) return;
+  const { error } = await sb.from('rbc_gallery').delete().eq('id', id);
+  if(error){ toast('삭제 실패: '+error.message); return; }
+  toast('삭제되었습니다.'); location.hash = '#/gallery';
+}
+
+/* ---------------- 모임 (정기/소모임) ---------------- */
+route('/meetups/:type', async ({type})=>{
+  if(!['regular','small'].includes(type)){ document.getElementById('app').innerHTML = `<div class="empty">잘못된 접근이에요.</div>`; return; }
+  const table = type==='regular' ? 'rbc_regular_meetups' : 'rbc_small_meetups';
+  const { data: meetups, error } = await sb.from(table).select('*').order('event_date');
+  if(error) throw error;
+  let myApps = [];
+  if(currentUser){
+    const { data } = await sb.from('rbc_applications').select('*').eq('user_id', currentUser.id).eq('meetup_type', type);
+    myApps = data || [];
+  }
+  document.getElementById('app').innerHTML = `
+    <div class="tabbar">
+      <button class="${type==='regular'?'active':''}" onclick="location.hash='#/meetups/regular'">정기모임 (연 4회)</button>
+      <button class="${type==='small'?'active':''}" onclick="location.hash='#/meetups/small'">소모임 (지역별, 매달)</button>
+    </div>
+    ${boardListHeader(
+      type==='regular' ? '정기모임' : '소모임',
+      type==='regular' ? '전 회원이 함께하는 연 4회 정기 라이딩입니다.' : '지역별로 열리는 매달 소규모 자전거 여행입니다.',
+      isAdmin() ? `location.hash='#/meetups/${type}/new'` : null
+    )}
+    <div class="meet-grid">
+      ${meetups.length ? meetups.map(m=>{
+        const mine = myApps.find(a=>a.meetup_id===m.id);
+        return `
+        <div class="meet-card">
+          <span class="badge">${type==='regular'?'정기모임':(m.region||'소모임')}</span>
+          <div class="meet-date">${fmtDate(m.event_date)}</div>
+          <div class="meet-title">${escapeHtml(m.title)}</div>
+          <div class="meet-loc">📍 ${escapeHtml(m.location||'미정')} · 정원 ${m.capacity}명</div>
+          <div style="color:var(--ink-soft);font-size:.86rem;">${escapeHtml(m.description||'')}</div>
+          ${mine ? `
+            <span class="status-pill status-${mine.status}">${mine.status==='pending'?'신청완료(대기)':mine.status==='approved'?'승인완료':'신청취소됨'}</span>
+            ${mine.status!=='canceled' ? `<button class="btn btn-ghost btn-sm" onclick="cancelApplication('${mine.id}','${type}')">신청 취소</button>` : ''}
+          ` : `<button class="btn btn-primary btn-sm" onclick="applyMeetup('${type}','${m.id}','${escapeHtml(m.title).replace(/'/g,"\\'")}')">신청하기</button>`}
+          ${isAdmin() ? `
+            <div style="display:flex;gap:6px;margin-top:6px;">
+              <button class="btn btn-ghost btn-sm" onclick="location.hash='#/meetups/${type}/${m.id}/edit'">수정</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteMeetup('${type}','${m.id}')">삭제</button>
+            </div>` : ''}
+        </div>`;
+      }).join('') : `<div class="empty">등록된 모임이 없어요.</div>`}
+    </div>`;
+});
+
+function applyMeetup(type, meetupId, title){
+  if(!requireLogin()) return;
+  openModal(`
+    <h3>모임 신청</h3>
+    <p style="color:var(--ink-soft);">${title}</p>
+    <form class="stack" id="applyForm">
+      <div class="field"><label>이름</label><input name="name" required value="${escapeHtml(currentProfile.name)}"></div>
+      <div class="field"><label>연락처</label><input name="phone" required value="${escapeHtml(currentProfile.phone||'')}"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary" type="submit">신청하기</button>
+        <button class="btn btn-ghost" type="button" onclick="closeModal()">취소</button>
+      </div>
+    </form>`);
+  document.getElementById('applyForm').onsubmit = async (e)=>{
+    e.preventDefault();
+    const f = e.target;
+    const { error } = await sb.from('rbc_applications').insert({
+      meetup_type: type, meetup_id: meetupId, user_id: currentUser.id,
+      name: f.name.value.trim(), phone: f.phone.value.trim()
+    });
+    if(error){ toast('신청 실패: '+(error.message.includes('duplicate')?'이미 신청한 모임이에요.':error.message)); return; }
+    closeModal(); toast('신청이 완료되었어요!'); router();
+  };
+}
+async function cancelApplication(appId, type){
+  if(!confirm('신청을 취소할까요?')) return;
+  const { error } = await sb.from('rbc_applications').update({status:'canceled'}).eq('id', appId);
+  if(error){ toast('취소 실패: '+error.message); return; }
+  toast('신청이 취소되었어요.'); router();
+}
+async function deleteMeetup(type, id){
+  if(!confirm('삭제할까요? 관련 신청 내역도 함께 삭제될 수 있어요.')) return;
+  const table = type==='regular' ? 'rbc_regular_meetups' : 'rbc_small_meetups';
+  const { error } = await sb.from(table).delete().eq('id', id);
+  if(error){ toast('삭제 실패: '+error.message); return; }
+  toast('삭제되었습니다.'); router();
+}
+route('/meetups/:type/new', async ({type})=>{
+  if(!isAdmin()){ document.getElementById('app').innerHTML = `<div class="empty">관리자만 작성할 수 있어요.</div>`; return; }
+  renderMeetupForm(type);
+});
+route('/meetups/:type/:id/edit', async ({type,id})=>{
+  if(!isAdmin()){ document.getElementById('app').innerHTML = `<div class="empty">관리자만 수정할 수 있어요.</div>`; return; }
+  const table = type==='regular' ? 'rbc_regular_meetups' : 'rbc_small_meetups';
+  const { data, error } = await sb.from(table).select('*').eq('id', id).single();
+  if(error) throw error;
+  renderMeetupForm(type, data);
+});
+function renderMeetupForm(type, item){
+  const editing = !!item;
+  const table = type==='regular' ? 'rbc_regular_meetups' : 'rbc_small_meetups';
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      <div class="detail-box">
+        <h2>${editing?'모임 수정':'모임 등록'} - ${type==='regular'?'정기모임':'소모임'}</h2>
+        <form class="stack" id="meetupForm">
+          <div class="field"><label>제목</label><input name="title" required value="${editing?escapeHtml(item.title):''}"></div>
+          <div class="field-row">
+            <div class="field"><label>일자</label><input type="date" name="event_date" required value="${editing?item.event_date:''}"></div>
+            <div class="field"><label>정원</label><input type="number" name="capacity" required value="${editing?item.capacity:(type==='regular'?40:15)}"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>장소</label><input name="location" value="${editing?escapeHtml(item.location||''):''}"></div>
+            ${type==='small'?`<div class="field"><label>지역</label><input name="region" value="${editing?escapeHtml(item.region||''):''}"></div>`:''}
+          </div>
+          <div class="field"><label>설명</label><textarea name="description">${editing?escapeHtml(item.description||''):''}</textarea></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary" type="submit">${editing?'수정 완료':'등록하기'}</button>
+            <button class="btn btn-ghost" type="button" onclick="history.back()">취소</button>
+          </div>
+        </form>
+      </div>
+    </div>`;
+  document.getElementById('meetupForm').onsubmit = async (e)=>{
+    e.preventDefault();
+    const f = e.target;
+    const payload = {
+      title:f.title.value.trim(), event_date:f.event_date.value,
+      capacity:parseInt(f.capacity.value,10), location:f.location.value.trim(),
+      description:f.description.value.trim()
+    };
+    if(type==='small') payload.region = f.region.value.trim();
+    let error;
+    if(editing){ ({error} = await sb.from(table).update(payload).eq('id', item.id)); }
+    else { ({error} = await sb.from(table).insert(payload)); }
+    if(error){ toast('저장 실패: '+error.message); return; }
+    toast(editing?'수정되었습니다.':'등록되었습니다.');
+    location.hash = '#/meetups/'+type;
+  };
+}
+
+/* ---------------- 마이페이지 ---------------- */
+route('/mypage', async ()=>{
+  if(!currentUser){ document.getElementById('app').innerHTML = `<div class="empty">로그인이 필요해요. <a href="#/login" style="color:var(--sky-deep);font-weight:700;">로그인 하러가기</a></div>`; return; }
+  const [{data:apps}, {data:posts}] = await Promise.all([
+    sb.from('rbc_applications').select('*').eq('user_id', currentUser.id).order('created_at',{ascending:false}),
+    sb.from('rbc_posts').select('*').eq('author_id', currentUser.id).order('created_at',{ascending:false}),
+  ]);
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      <div class="detail-box" style="margin-bottom:24px;">
+        <h2>${escapeHtml(currentProfile.name)}님의 마이페이지</h2>
+        <p style="color:var(--ink-soft);">${escapeHtml(currentProfile.email||'')} · ${escapeHtml(currentProfile.phone||'연락처 미등록')}</p>
+      </div>
+      <section class="block" style="margin-top:0;">
+        <div class="block-head"><h2 style="font-size:1.2rem;">내 모임 신청 내역</h2></div>
+        <div class="card-list">
+          ${(apps&&apps.length) ? apps.map(a=>`
+            <div class="row-item" style="cursor:default;">
+              <div>
+                <div class="row-title">${a.meetup_type==='regular'?'정기모임':'소모임'} 신청</div>
+                <div class="row-meta">${fmtDate(a.created_at)} 신청</div>
+              </div>
+              <span class="status-pill status-${a.status}">${a.status==='pending'?'대기중':a.status==='approved'?'승인완료':'취소됨'}</span>
+            </div>`).join('') : `<div class="empty">신청한 모임이 없어요.</div>`}
+        </div>
+      </section>
+      <section class="block">
+        <div class="block-head"><h2 style="font-size:1.2rem;">내가 쓴 글</h2></div>
+        <div class="card-list">
+          ${(posts&&posts.length) ? posts.map(p=>`
+            <div class="row-item" onclick="location.hash='#/posts/${p.id}'">
+              <div><div class="row-title">${escapeHtml(p.title)}</div><div class="row-meta">${fmtDate(p.created_at)}</div></div>
+            </div>`).join('') : `<div class="empty">작성한 글이 없어요.</div>`}
+        </div>
+      </section>
+    </div>`;
+});
+
+/* ---------------- 로그인 / 회원가입 ---------------- */
+route('/login', async ()=>{
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      <div class="detail-box" style="max-width:420px;margin:0 auto;">
+        <h2 style="text-align:center;">로그인</h2>
+        <form class="stack" id="loginForm">
+          <div class="field"><label>이메일</label><input type="email" name="email" required></div>
+          <div class="field"><label>비밀번호</label><input type="password" name="password" required></div>
+          <button class="btn btn-primary" type="submit">로그인</button>
+        </form>
+        <p style="text-align:center;margin-top:14px;color:var(--ink-soft);">아직 회원이 아니신가요? <a href="#/signup" style="color:var(--sky-deep);font-weight:700;">회원가입</a></p>
+      </div>
+    </div>`;
+  document.getElementById('loginForm').onsubmit = handleLogin;
+});
+route('/signup', async ()=>{
+  document.getElementById('app').innerHTML = `
+    <div class="container-narrow">
+      <div class="detail-box" style="max-width:420px;margin:0 auto;">
+        <h2 style="text-align:center;">회원가입</h2>
+        <form class="stack" id="signupForm">
+          <div class="field"><label>이름</label><input name="name" required></div>
+          <div class="field"><label>이메일</label><input type="email" name="email" required></div>
+          <div class="field"><label>연락처</label><input name="phone" placeholder="010-0000-0000" required></div>
+          <div class="field"><label>비밀번호 (6자 이상)</label><input type="password" name="password" required minlength="6"></div>
+          <button class="btn btn-primary" type="submit">가입하기</button>
+        </form>
+        <p style="text-align:center;margin-top:14px;color:var(--ink-soft);">이미 회원이신가요? <a href="#/login" style="color:var(--sky-deep);font-weight:700;">로그인</a></p>
+      </div>
+    </div>`;
+  document.getElementById('signupForm').onsubmit = handleSignup;
+});
+
+/* ---------------- 관리자 ---------------- */
+route('/admin', async ()=>{
+  if(!isAdmin()){ document.getElementById('app').innerHTML = `<div class="empty">관리자만 접근할 수 있어요.</div>`; return; }
+  document.getElementById('app').innerHTML = `
+    <div class="tabbar" id="adminTabs">
+      <button class="active" data-tab="apps">신청자 관리</button>
+      <button data-tab="members">회원 관리</button>
+    </div>
+    <div id="adminPane"></div>`;
+  document.querySelectorAll('#adminTabs button').forEach(b=>{
+    b.onclick = ()=>{
+      document.querySelectorAll('#adminTabs button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      renderAdminPane(b.dataset.tab);
+    };
+  });
+  renderAdminPane('apps');
+});
+async function renderAdminPane(tab){
+  const pane = document.getElementById('adminPane');
+  if(tab==='apps'){
+    const { data: apps, error } = await sb.from('rbc_applications').select('*').order('created_at',{ascending:false});
+    if(error){ pane.innerHTML = `<div class="empty">${error.message}</div>`; return; }
+    // 모임 제목 매핑
+    const [{data:rm},{data:sm}] = await Promise.all([
+      sb.from('rbc_regular_meetups').select('id,title'), sb.from('rbc_small_meetups').select('id,title')
+    ]);
+    const titleOf = (type,id)=>{
+      const list = type==='regular'?rm:sm;
+      const found = (list||[]).find(x=>x.id===id);
+      return found ? found.title : '(삭제된 모임)';
+    };
+    pane.innerHTML = `
+      <table class="admin-table">
+        <thead><tr><th>구분</th><th>모임</th><th>이름</th><th>연락처</th><th>신청일</th><th>상태</th><th>처리</th></tr></thead>
+        <tbody>
+          ${apps.length ? apps.map(a=>`
+            <tr>
+              <td>${a.meetup_type==='regular'?'정기모임':'소모임'}</td>
+              <td>${escapeHtml(titleOf(a.meetup_type,a.meetup_id))}</td>
+              <td>${escapeHtml(a.name)}</td>
+              <td>${escapeHtml(a.phone||'')}</td>
+              <td>${fmtDate(a.created_at)}</td>
+              <td><span class="status-pill status-${a.status}">${a.status==='pending'?'대기중':a.status==='approved'?'승인완료':'취소됨'}</span></td>
+              <td style="display:flex;gap:4px;flex-wrap:wrap;">
+                ${a.status!=='approved'?`<button class="btn btn-primary btn-sm" onclick="adminSetAppStatus('${a.id}','approved')">승인</button>`:''}
+                ${a.status!=='canceled'?`<button class="btn btn-danger btn-sm" onclick="adminSetAppStatus('${a.id}','canceled')">취소</button>`:''}
+              </td>
+            </tr>`).join('') : `<tr><td colspan="7" class="empty">신청 내역이 없어요.</td></tr>`}
+        </tbody>
+      </table>`;
+  } else if(tab==='members'){
+    const { data: members, error } = await sb.from('rbc_profiles').select('*').order('created_at',{ascending:false});
+    if(error){ pane.innerHTML = `<div class="empty">${error.message}</div>`; return; }
+    pane.innerHTML = `
+      <table class="admin-table">
+        <thead><tr><th>이름</th><th>이메일</th><th>연락처</th><th>가입일</th><th>권한</th></tr></thead>
+        <tbody>
+          ${members.map(m=>`
+            <tr>
+              <td>${escapeHtml(m.name)}</td>
+              <td>${escapeHtml(m.email||'')}</td>
+              <td>${escapeHtml(m.phone||'')}</td>
+              <td>${fmtDate(m.created_at)}</td>
+              <td>${m.role==='admin'?'<span class="badge">관리자</span>':'일반회원'}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+      <p style="color:var(--ink-soft);font-size:.85rem;margin-top:10px;">※ 관리자 지정은 보안을 위해 Supabase SQL Editor에서 진행해 주세요.</p>`;
+  }
+}
+async function adminSetAppStatus(id, status){
+  const { error } = await sb.from('rbc_applications').update({status}).eq('id', id);
+  if(error){ toast('처리 실패: '+error.message); return; }
+  toast('처리되었어요.'); renderAdminPane('apps');
+}
+
+/* ============================================================
+   초기 구동
+============================================================ */
+document.getElementById('hamburgerBtn').onclick = ()=>{
+  document.getElementById('mainNav').classList.toggle('open');
+};
+
+async function init(){
+  const { data: { session } } = await sb.auth.getSession();
+  currentUser = session ? session.user : null;
+  await loadProfile();
+  renderAuthArea();
+  sb.auth.onAuthStateChange(async (event, session)=>{
+    currentUser = session ? session.user : null;
+    await loadProfile();
+    renderAuthArea();
+  });
+  router();
+}
+init();
+</script>
+</body>
+</html>
